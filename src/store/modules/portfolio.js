@@ -6,6 +6,7 @@ const state = {
 const mutations = {
   BUY_STOCK(state, { stockId, quantity, stockPrice }) {
     const record = state.stocks.find(element => element.id == stockId);
+
     if (record) {
       record.quantity += quantity;
     } else {
@@ -14,15 +15,19 @@ const mutations = {
         quantity: quantity
       });
     }
+
     state.funds -= stockPrice * quantity;
   },
+
   SELL_STOCK(state, { stockId, quantity, stockPrice }) {
     const record = state.stocks.find(element => element.id == stockId);
+
     if (record.quantity > quantity) {
       record.quantity -= quantity;
     } else {
-      state.stocks.splice(state.stocks.indexOf(record, 1));
+      state.stocks.splice(state.stocks.indexOf(record), 1);
     }
+
     state.funds += stockPrice * quantity;
   }
 };
@@ -36,7 +41,7 @@ const actions = {
 const getters = {
   stockPortfolio(state, getters) {
     return state.stocks.map(stock => {
-      const record = getters.stocks.find(element => element.id == stockId);
+      const record = getters.stocks.find(element => element.id == stock.id);
       return {
         id: stock.id,
         quantity: stock.quantity,

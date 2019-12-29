@@ -1,6 +1,6 @@
 <template>
-  <div class="w-1/3 border border-gray-500 my-2 rounded-lg shadow">
-    <div class="bg-appBlue1 text-white p-4 rounded-t-lg">
+  <div class="w-1/3 border border-gray-500 mb-6 rounded-lg shadow">
+    <div class="bg-appGreen1 text-white p-4 rounded-t-lg">
       <h3>
         {{ stock.name }}
         <span class="text-xs"
@@ -13,37 +13,44 @@
         class="appearance-none bg-transparent border border-gray-500 w-1/2 text-gray-700 mr-32 p-2 rounded focus:outline-none"
         type="number"
         placeholder="Quantity"
-        v-model="quantity"
+        v-model="input"
       />
       <button
-        class="flex-shrink-0 bg-appBlue1 hover:bg-appBlue2 py-2 px-4 rounded text-white focus:outline-none"
+        class="flex-shrink-0 bg-appGreen1 hover:bg-appGreen2 py-2 px-4 rounded text-white focus:outline-none disabled:bg-gray-400 disabled:cursor-not-allowed"
         @click="sellStock"
-        :disabled="quantity <= 0"
+        :disabled="insufficientQuantity || input == '' || quantity <= 0"
       >
-        Sell
+        {{ insufficientQuantity ? "Low Stocks" : "Sell" }}
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
 export default {
   props: ["stock"],
   data() {
     return {
-      quantity: 0
+      input: ""
     };
   },
+  computed: {
+    quantity() {
+      return parseInt(this.input, 10);
+    },
+    insufficientQuantity() {
+      return this.quantity > this.stock.quantity;
+    }
+  },
   methods: {
-    ...mapActions(["sellStock"]),
     sellStock() {
       const order = {
         stockId: this.stock.id,
         stockPrice: this.stock.price,
         quantity: this.quantity
       };
-      this.sellStock();
+      this.$store.dispatch("sellStock", order);
+      this.input = "";
     }
   }
 };
