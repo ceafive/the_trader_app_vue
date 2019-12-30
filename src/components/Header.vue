@@ -25,20 +25,18 @@
         <p class="lg:inline-block my-2 lg:mr-1 p-2 " @click="endDay">
           End Day
         </p>
-        <p class="lg:inline-block my-2 lg:mr-1 p-2">
+        <p @click="saveData" class="lg:inline-block my-2 lg:mr-1 p-2">
           Save Data
         </p>
-        <p class="lg:inline-block my-2 lg:mr-1 p-2">
+        <p @click="loadData" class="lg:inline-block my-2 lg:mr-1 p-2">
           Load Data
         </p>
-        <div class="lg:inline-block lg:mr-1 cursor-auto text-base">
-          <p>
-            Funds:
-            <span class="bg-green-500 text-white px-1">{{
-              funds | currency
-            }}</span>
-          </p>
-        </div>
+        <p class="lg:inline-block lg:mr-1 cursor-auto text-base">
+          Funds:
+          <span class="bg-green-500 text-white px-1">{{
+            funds | currency
+          }}</span>
+        </p>
       </div>
     </div>
   </div>
@@ -46,6 +44,9 @@
 
 <script>
 export default {
+  data() {
+    return {};
+  },
   computed: {
     funds() {
       return this.$store.getters.funds;
@@ -54,6 +55,17 @@ export default {
   methods: {
     endDay() {
       this.$store.dispatch("randomizeStocks");
+    },
+    saveData() {
+      const data = {
+        funds: this.$store.getters.funds,
+        stockPortfolio: this.$store.getters.stockPortfolio,
+        stocks: this.$store.getters.stocks
+      };
+      this.$http.put("data.json", data);
+    },
+    loadData() {
+      this.$store.dispatch("loadData");
     }
   }
 };
